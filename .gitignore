@@ -1,0 +1,20 @@
+node_modules
+.next
+out
+.env.local
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+
+# Deployment credentials and generated local state
+.vercel
+*.bak
+supabase/.temp
+supabase/.branches
+supabase/snippets
+
+.claude
+.env
+.env.*
+!.env.example

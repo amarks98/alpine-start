@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* Numbers in the plan are read as a column — keep them from jittering. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
