@@ -4,7 +4,7 @@
 
 The chosen hosted project is **amarks98's Casper Project**, ref `nobqwmdimnsiodzrrgcl`. Its original Alpine Start routes schema was already present. The additive date/description upgrade has been applied through the SQL editor, and RLS plus all four owner-only policies were verified there.
 
-The hosted demo user is `demo@alpine.dev`; its confirmation and password configuration must be completed before demo sign-in can be verified. GitHub/Vercel deployment is in progress; there is no verified production URL recorded yet.
+Production is deployed at https://alpine-start.vercel.app. Source is in the private repository https://github.com/amarks98/alpine-start. The production login page is verified. Demo credentials were supplied through the ignored environment file and deployed; Supabase currently returns `Email not confirmed` for that account. Its email confirmation is pending. Vercel GitHub App access is also pending, so the initial deployment used the CLI.
 
 Production values are prepared in `.env.production.local`, which is ignored by Git and readable only by the file owner. Do not commit it, `.env.local`, or `.vercel/`.
 
@@ -39,12 +39,12 @@ For a new hosted project, use the [Supabase migration workflow](https://supabase
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://nobqwmdimnsiodzrrgcl.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Project public anon/publishable key |
-| `DEMO_EMAIL` | `demo@alpine.dev` |
+| `DEMO_EMAIL` | Confirmed demo account supplied by the owner |
 | `DEMO_PASSWORD` | Demo user's password; server-only |
 
 The service-role key is not required by the application and must not be deployed.
 
-Email/password sign-up currently expects confirmation to be disabled for immediate login. On a shared project, preserve its existing auth policy unless the owner authorizes changing it; confirmed accounts can still sign in. Confirm the demo user individually rather than weakening the whole project's settings just for the demo.
+Email/password sign-up displays confirmation instructions when Supabase does not issue a session. On a shared project, preserve its existing auth policy unless the owner authorizes changing it; confirmed accounts can still sign in. Confirm the demo user individually rather than weakening the whole project's settings just for the demo.
 
 ## Vercel
 
@@ -71,13 +71,13 @@ Use a fresh browser session for the deployment checks. Local results so far:
 - [x] Restore party 2 / cutoff 17:00 → 04:29, dark-bound; checkpoint 15:41.
 - [x] Save and reload retain the selected date and cutoff.
 - [x] Prose preview parses four segments; application, reordering and save/reload work.
-- [ ] Mobile layout check.
-- [ ] Sign out; protected routes lead to login.
-- [ ] Another user's route returns 404 in the browser (database isolation tests pass).
+- [ ] Mobile layout check at 390px (browser override retained a 662px viewport; narrower width remains unverified).
+- [x] Sign out; protected routes lead to login.
+- [x] Another user's route returns 404 in the browser (database isolation tests pass).
 - [ ] Hosted deployment: repeat all applicable checks with production credentials.
 
 For the exact figures above, explicitly select **July 15, 2026**, margin **60**, and reset party size to **2** before the 17:00-cutoff case. The editor otherwise defaults to a saved date or tomorrow, so its daylight figures will differ.
 
 ## Remaining operational work
 
-Record the production URL after verification, baseline remote migration history, and keep future database changes in migrations. Trip logging, calibrated rates and offline use remain separate follow-up features.
+Finish hosted demo acceptance after email confirmation, connect Vercel GitHub App access for automatic deploys, and baseline remote migration history before automated database pushes. Keep future database changes in migrations. Trip logging, calibrated rates and offline use remain separate follow-up features.

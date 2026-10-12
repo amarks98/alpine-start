@@ -1,10 +1,12 @@
 # Alpine Start
 
+Live application: https://alpine-start.vercel.app. Private source repository: https://github.com/amarks98/alpine-start.
+
 Plan when to leave so you finish exposed terrain before a storm cutoff and complete the route before nautical dusk minus your margin.
 
 The app accepts a route as prose (one segment per line) or editable structured segments. It produces a departure time, a named turnaround/checkpoint deadline, an ordered per-segment clock, and the binding constraint: storm or darkness.
 
-**Current status:** local production build and TypeScript checks pass; all **41 tests pass** against the local Supabase stack (32 unit/regression checks and 9 database checks). The selected hosted Supabase project is **amarks98's Casper Project** (`nobqwmdimnsiodzrrgcl`); its routes table has the date/description upgrade and four owner-only RLS policies. Application deployment is still in progress.
+**Current status:** local production build and TypeScript checks pass; all **42 tests pass** against the local Supabase stack (33 unit/regression checks and 9 database checks). The selected hosted Supabase project is **amarks98's Casper Project** (`nobqwmdimnsiodzrrgcl`); its routes table has the date/description upgrade and four owner-only RLS policies. Production is deployed and its login page is verified. Hosted demo email confirmation and Vercel GitHub access are pending; see [DEPLOY.md](DEPLOY.md).
 
 ## Run locally
 
@@ -23,7 +25,7 @@ npx supabase db reset --local
 
 Reset deletes local users and data. Do not use it on a database you want to preserve. Existing local data was upgraded with the additive second migration; a destructive reset has not been run during the current verification.
 
-Copy `.env.local.example` to `.env.local` and fill in the local API URL and anon key printed by `npx supabase status`. Create a confirmed demo user in local Supabase Studio and set `DEMO_EMAIL` and `DEMO_PASSWORD`, or use email/password sign-up.
+Copy `.env.example` to `.env.local` and fill in the local API URL and anon key printed by `npx supabase status`. Create a confirmed demo user in local Supabase Studio and set `DEMO_EMAIL` and `DEMO_PASSWORD`, or use email/password sign-up.
 
 ```bash
 npm run dev
@@ -106,7 +108,7 @@ npm run typecheck
 npm run build
 ```
 
-Without database settings, 32 tests pass and 9 integration tests skip. To include the database checks against the local stack:
+Without database settings, 33 tests pass and 9 integration tests skip. To include the database checks against the local stack:
 
 ```bash
 SB_URL=http://127.0.0.1:54321 SB_ANON=<local-anon-key> npm test
