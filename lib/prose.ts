@@ -62,3 +62,13 @@ export function parseRouteProse(text: string): ParsedRoute {
   }
   return { segments: errors.length ? [] : segments, errors }
 }
+
+/** Require complete single-leg lines so extra legs cannot be silently dropped. */
+export function isConstrainedProse(text: string): boolean {
+  const number = String.raw`\d+(?:\.\d+)?`
+  const exposure = String.raw`(?:,?\s*(?:exposed|not exposed|unexposed))?\.?`
+  const walking = String.raw`(?:ascend|descend)\s+${number}\s*km\s+(?:on\s+)?(?:trail|off[ -]trail)\s+(?:gaining|losing)\s+${number}\s*m${exposure}`
+  const rope = String.raw`(?:ascend|descend)\s+(?:\d+\s+)?(?:pitch(?:es)?|rappels?)(?:\s+at\s+5\.\d{1,2}[abcd]?[+-]?)?${exposure}`
+  const pattern = new RegExp(`^[^:\\n]+:\\s*(?:${walking}|${rope})$`, 'i')
+  return text.split(/\r?\n/).filter(s => s.trim()).every(s => pattern.test(s.trim()))
+}

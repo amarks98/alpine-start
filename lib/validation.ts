@@ -5,11 +5,7 @@ import type { Segment } from '@/lib/engine'
 export const terrainSchema = z.enum(['trail', 'offtrail', 'pitches', 'rappels'])
 export const phaseSchema = z.enum(['ascent', 'descent'])
 
-/**
- * The persistence contract for the jsonb column. The engine coerces its own
- * inputs, so this is not protecting arithmetic — it is stopping a stale or
- * hostile client from corrupting the column.
- */
+/** Validation for persisted segment JSON. */
 export const segmentSchema = z.object({
   id: z.string().min(1).max(64),
   label: z.string().max(120),
@@ -21,6 +17,21 @@ export const segmentSchema = z.object({
   grade: z.string().max(20).optional(),
   exposed: z.boolean().optional(),
 })
+
+/** Drafts may be saved, but incomplete measurements must never produce a recommendation. */
+export function segmentProblems(segment: Segment): string[] {
+  const parsed = segmentSchema.safeParse(segment)
+  if (!parsed.success) return ['Use valid, non-negative measurements within the field limits.']
+  const problems: string[] = []
+  if (!segment.label.trim()) problems.push('Give this segment a name.')
+  if (segment.terrain === 'trail' || segment.terrain === 'offtrail') {
+    if (segment.km === undefined) problems.push('Enter distance in km.')
+    if (segment.vertM === undefined) problems.push('Enter vertical change in m (0 for flat ground).')
+  } else if (segment.count !== undefined && segment.count < 1) {
+    problems.push('Enter at least one pitch or rappel.')
+  }
+  return problems
+}
 
 export const segmentsSchema = z.array(segmentSchema).max(80)
 
@@ -35,11 +46,7 @@ export const savePayloadSchema = z.object({
 
 export type SavePayload = z.infer<typeof savePayloadSchema>
 
-/**
- * Coordinates are validated BEFORE tzlookup() sees them: tz-lookup throws on
- * NaN or out-of-range input, and it is the only input path that can crash
- * createRoute.
- */
+/** Validate coordinates before tzlookup, which throws on invalid ranges. */
 export const createRouteSchema = z.object({
   name: z.string().trim().min(1, 'Give the route a name').max(120),
   lat: z.number().min(-90).max(90),

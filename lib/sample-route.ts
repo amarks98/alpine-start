@@ -1,18 +1,7 @@
 import type { Segment } from '@/lib/engine'
 
-/**
- * The Palisades Traverse — Thunderbolt to Polemonium, from a high camp at Sam
- * Mack Meadow. Camp-to-camp rather than car-to-car, because that is how the
- * route is actually climbed: car-to-car at these rates is a 23-hour day that
- * can only be planned as a bivy, which makes for an honest number and a
- * useless demo.
- *
- * Deliberately a real interleaved traverse rather than a there-and-back: the
- * ridge descends into notches between summits, which is exactly the shape that
- * makes a phase sum disagree with the clock column. The `exposed` flags run
- * from the couloir through the rappels off the crest, so the storm deadline
- * anchors on getting OFF the ridge rather than on reaching a summit.
- */
+/** Illustrative camp-to-camp Palisades traverse. Interleaved ascents and descents
+ * exercise checkpoint ordering; exposure ends after the crest rappels. */
 export const SAMPLE_ROUTE = {
   name: 'Palisades Traverse — Thunderbolt to Polemonium (from high camp)',
   lat: 37.0947,

@@ -1,11 +1,4 @@
-/**
- * The planner. Pure — no Next.js, no Supabase, no React. Runs in the browser on
- * every change, which is why it has to stay this way.
- *
- * Everything is in LOCAL MINUTES SINCE MIDNIGHT. 14:00 is 840. A negative value
- * is the previous evening. This keeps timezone arithmetic out of the hot path:
- * the only conversions happen in `toLocalMinutes` and `utcOffsetMinutes`.
- */
+/** Pure planner using local minutes since midnight; negative times refer to earlier days. */
 
 import { getTimes } from 'suncalc'
 import { isPlanDate } from './dates'
@@ -28,16 +21,11 @@ export type Segment = {
 /** Phase 2 calibration seam: a per-terrain multiplier learned from logged trips. */
 export type TerrainFactors = Partial<Record<Terrain, number>>
 
-/**
- * The engine runs on every keystroke, so a half-typed field is not an edge case
- * — it is every single edit. A cleared number input is '' / NaN, and one NaN
- * would render the entire panel as NaN:NaN mid-typing. So coerce here, at the
- * boundary. zod guards persistence; this guards arithmetic.
- */
+/** Coerce partial numeric edits to keep NaN out of live calculations. */
 export const num = (v: unknown, fallback = 0): number =>
   typeof v === 'number' && Number.isFinite(v) ? v : fallback
 
-// ---------------------------------------------------------------- time models
+// Time models
 
 /** Munter rates. Assumed defaults, labelled as such in the UI. */
 const MUNTER: Record<'trail' | 'offtrail', Record<Phase, number>> = {
@@ -52,21 +40,12 @@ const PITCH_MIN = { easy: 30, mid: 45, hard: 60 } as const
 export const partyFactor = (partySize: number): number =>
   1 + 0.5 * Math.max(0, num(partySize, 2) - 2)
 
-// -------------------------------------------------------------- YDS  grades
+// Yds  grades
 
 const YDS = /^5\.(\d{1,2})\s*([abcd])?(?:\s*\/\s*[abcd])?\s*([+-])?$/i
 const LETTER = { a: 0, b: 0.25, c: 0.5, d: 0.75 } as const
 
-/**
- * YDS grade as a comparable number: the decimal after "5.", plus a fraction for
- * the letter or sign. Letters order within a number, signs order around it.
- *
- *   5.8- → 7.75 · 5.9 → 9 · 5.9+ → 9.25 · 5.10a → 10 · 5.10d → 10.75 · 5.11a → 11
- *
- * A three-band lookup over the raw string would be silently wrong and dangerous:
- * lexicographically '5.10a' < '5.6', because '1' < '6'. That prices a 5.10a pitch
- * at 30 minutes instead of 60.
- */
+/** Parse numeric YDS grades plus letter/sign offsets so 5.9 sorts before 5.10a. */
 export function gradeValue(grade?: string): number | null {
   const m = YDS.exec((grade ?? '').trim())
   if (!m) return null // '', '4th class', 'A1', undefined
@@ -75,15 +54,7 @@ export function gradeValue(grade?: string): number | null {
   return Number(m[1]) + frac
 }
 
-/**
- * Minutes per pitch, by band. The letter never changes the band — a through d all
- * sit in 5.10+ — but `gradeValue` is the comparable the UI validates with and the
- * seam Phase 2 needs when pitch times get finer than three bands.
- *
- * The fallback is the MIDDLE band, not the fast one. The errors are not
- * symmetric: underestimating makes you leave too late, which is the failure this
- * product exists to prevent. Round toward the slower estimate when parsing fails.
- */
+/** Grade bands determine pitch times; unreadable grades use the middle band (45 min). */
 export function pitchMinutes(grade?: string): { minutes: number; assumed: boolean } {
   const v = gradeValue(grade)
   if (v === null) return { minutes: PITCH_MIN.mid, assumed: true }
@@ -93,7 +64,7 @@ export function pitchMinutes(grade?: string): { minutes: number; assumed: boolea
   }
 }
 
-// ------------------------------------------------------------ segment timing
+// Segment timing
 
 export function segmentMinutes(
   seg: Segment,
@@ -116,7 +87,7 @@ export function segmentMinutes(
   }
 }
 
-// --------------------------------------------------------------- timezones
+// Timezones
 
 /** An instant → local minutes since midnight in `tz`. */
 export function toLocalMinutes(d: Date, tz: string): number {
@@ -130,13 +101,7 @@ export function toLocalMinutes(d: Date, tz: string): number {
   return get('hour') * 60 + get('minute')
 }
 
-/**
- * Minutes east of UTC for `tz` on `date` — the unit suncalc's `utcOffset` wants.
- *
- * Fixed point: probe at 12:00Z, correct the instant, re-read. One pass converges
- * for every real zone and removes the DST-boundary ambiguity that reading a
- * fixed UTC instant would have.
- */
+/** Date-specific minutes east of UTC, corrected from a noon probe for the local date. */
 export function utcOffsetMinutes(date: string, tz: string): number {
   const read = (at: Date) => {
     const name =
@@ -150,7 +115,7 @@ export function utcOffsetMinutes(date: string, tz: string): number {
   return read(new Date(noonUtc - read(new Date(noonUtc)) * 60_000))
 }
 
-// ---------------------------------------------------------------- daylight
+// Daylight
 
 export type Daylight = {
   sunriseMin: number | null
@@ -159,19 +124,8 @@ export type Daylight = {
   alwaysDown: boolean
 }
 
-/**
- * Nautical dusk (−12°) and sunrise, in local minutes.
- *
- * Two suncalc parameters matter here:
- *   `utcOffset` (minutes east of UTC) returns exactly the local CALENDAR day
- *     containing `date`, rather than the solar day from one nadir to the next.
- *   `height` (metres) is applied to every named time's angle, not just
- *     sunrise/sunset, so dusk does account for the route's elevation.
- *
- * suncalc returns `null` — not Invalid Date — when the sun never reaches an
- * angle that day. Unguarded that is a TypeError in a client component on every
- * keystroke, so the nulls are propagated deliberately and handled in buildPlan.
- */
+/** Local sunrise and nautical dusk (−12°). Pass elevation and calendar-day UTC offset;
+ * preserve null times for polar conditions. */
 export function daylight(
   date: string,
   tz: string,
@@ -192,7 +146,7 @@ export function daylight(
   }
 }
 
-// ------------------------------------------------------------------- plan
+// Plan
 
 export type PlanInput = {
   date: string // 'YYYY-MM-DD', local to the route
@@ -237,17 +191,8 @@ export type Plan = {
 
 const sum = (xs: number[]): number => xs.reduce((a, b) => a + b, 0)
 
-/**
- * The invariant that drives this:
- *
- *   The DARK constraint depends on the route's TOTAL time, which is
- *   order-independent. The STORM constraint depends on the time elapsed UP TO A
- *   POINT in the route, which is order-dependent.
- *
- * So the storm term is a prefix sum to a cutoff anchor, not a phase sum. On an
- * interleaved traverse those differ by every descent minute before the anchor,
- * and a phase sum would print a summit time the clock column contradicts.
- */
+/** Storm timing uses elapsed time through the checkpoint; darkness uses total duration.
+ * A phase sum would omit descents before the checkpoint on interleaved traverses. */
 export function buildPlan(input: PlanInput): Plan {
   const { segments, partySize, stormCutoffMin, marginMin, factors } = input
 
@@ -330,7 +275,7 @@ export function buildPlan(input: PlanInput): Plan {
   }
 }
 
-// ---------------------------------------------------------------- formatting
+// Formatting
 
 /** Local minutes → 'HH:MM', wrapping negatives into the previous day. */
 export function formatClock(min: number): string {
@@ -351,11 +296,7 @@ export function formatDuration(min: number): string {
   return h === 0 ? `${m}m` : m === 0 ? `${h}h` : `${h}h ${m}m`
 }
 
-/**
- * 'YYYY-MM-DD' for `now` shifted by `dayOffset` days, in `tz`. Takes `now` as an
- * argument so it stays pure — the server computes the editor's default date and
- * passes it down as a prop, which keeps SSR and hydration in agreement.
- */
+/** Route-local date shifted by dayOffset; the server supplies it to avoid hydration drift. */
 export function dateInZone(now: Date, tz: string, dayOffset = 0): string {
   const local = new Intl.DateTimeFormat('en-CA', {
     timeZone: tz,

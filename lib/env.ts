@@ -3,7 +3,7 @@ export function requiredEnv(name: string): string {
   const value = process.env[name]
   if (!value) {
     throw new Error(
-      `Missing ${name}. Copy .env.local.example to .env.local and fill it in ` +
+      `Missing ${name}. Copy .env.example to .env.local and fill it in ` +
         `(Supabase dashboard → Settings → API).`,
     )
   }
