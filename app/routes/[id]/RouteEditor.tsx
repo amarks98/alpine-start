@@ -1,10 +1,10 @@
 'use client'
 
-import { useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { saveRoute } from '@/app/actions'
 import { buildPlan, formatClock, type Segment, type Terrain } from '@/lib/engine'
-import type { RouteRow } from '@/lib/validation'
-import { parseRouteProse, PROSE_EXAMPLE } from '@/lib/prose'
+import { savePayloadSchema, segmentProblems, type RouteRow } from '@/lib/validation'
+import { ProseInput } from './ProseInput'
 import { PlanPanel } from './PlanPanel'
 
 const TERRAIN_LABEL: Record<Terrain, string> = {
@@ -30,8 +30,6 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
   const [marginMin, setMarginMin] = useState(route.margin_min)
   const [date, setDate] = useState(defaultDate)
   const [description, setDescription] = useState(route.description ?? '')
-  const [proseErrors, setProseErrors] = useState<string[]>([])
-  const [prosePreview, setProsePreview] = useState<Segment[] | null>(null)
 
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -39,9 +37,55 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
   const snapshot = JSON.stringify({ segments, partySize, stormCutoffMin, marginMin, date, description })
   const [baseline, setBaseline] = useState(snapshot)
   const dirty = snapshot !== baseline
+  const problems = segments.flatMap((segment, index) => segmentProblems(segment).map(message => `Segment ${index + 1}: ${message}`))
+  const planReady = segments.length > 0 && problems.length === 0
+  const [restored, setRestored] = useState(false)
+  const [draftLoaded, setDraftLoaded] = useState(false)
+  const draftKey = `alpine-start:draft:${route.id}`
 
-  // The whole point of the architecture: this is a pure function call in the
-  // browser, so every edit repaints the plan with no round trip.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(draftKey)
+      const draft = raw ? savePayloadSchema.safeParse(JSON.parse(raw)) : null
+      if (draft?.success) {
+        const d = draft.data
+        setSegments(d.segments); setPartySize(d.partySize); setStormCutoffMin(d.stormCutoffMin)
+        setMarginMin(d.marginMin); setDate(d.date); setDescription(d.description)
+        setRestored(true)
+      }
+    } catch { /* Storage is optional; saving to the server still works. */ }
+    setDraftLoaded(true)
+  }, [draftKey])
+
+  useEffect(() => {
+    if (!draftLoaded) return
+    try {
+      if (dirty) sessionStorage.setItem(draftKey, snapshot)
+      else sessionStorage.removeItem(draftKey)
+    } catch { /* Private browsing or full storage must not break editing. */ }
+  }, [draftLoaded, draftKey, dirty, snapshot])
+
+  useEffect(() => {
+    if (!dirty) return
+    const unload = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = '' }
+    const navigate = (event: MouseEvent) => {
+      const link = event.target instanceof Element ? event.target.closest('a') : null
+      if (!link || link.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
+      const destination = new URL(link.href, location.href)
+      if (destination.pathname === location.pathname && destination.search === location.search) return
+      if (!window.confirm('Leave this route with unsaved changes? Save first to keep your edits on your account.')) {
+        event.preventDefault(); event.stopPropagation()
+      }
+    }
+    window.addEventListener('beforeunload', unload)
+    document.addEventListener('click', navigate, true)
+    return () => {
+      window.removeEventListener('beforeunload', unload)
+      document.removeEventListener('click', navigate, true)
+    }
+  }, [dirty])
+
+  // Recompute locally on every edit.
   const plan = useMemo(
     () =>
       buildPlan({
@@ -104,18 +148,18 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_22rem] lg:items-start">
-      <section>
+      <section id="route-editor" className="min-w-0 scroll-mt-4">
         <header className="flex flex-wrap items-baseline justify-between gap-3">
           <div>
             <h1 className="text-lg font-semibold tracking-tight text-white">{route.name}</h1>
-            <p className="tabular mt-1 text-xs text-slate-500">
+            <p className="tabular mt-1 text-xs text-slate-400">
               {route.lat.toFixed(4)}, {route.lng.toFixed(4)} · {route.elev_m} m · {route.timezone}
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             {dirty && !pending && <span className="text-xs text-amber-500">Unsaved changes</span>}
-            {!dirty && !pending && <span className="text-xs text-slate-600">Saved</span>}
+            {!dirty && !pending && <span className="text-xs text-slate-400">Saved</span>}
             <button
               type="button"
               onClick={save}
@@ -133,40 +177,12 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
           </p>
         )}
 
-        <details className="mt-5 rounded-lg border border-slate-800 p-3">
-          <summary className="cursor-pointer text-sm font-medium text-slate-200">Describe your route in prose</summary>
-          <p id="prose-help" className="mt-2 text-xs text-slate-400">
-            One segment per line. Include terrain and ascend/descend; walking needs km and vertical m.
-            Rope work defaults to one pitch or rappel. Add “exposed” where the storm deadline applies.
-          </p>
-          <label htmlFor="route-description" className="mt-3 block text-xs text-slate-400">Route description</label>
-          <textarea id="route-description" aria-describedby="prose-help" rows={6} value={description}
-            maxLength={20000} placeholder={PROSE_EXAMPLE}
-            onChange={(e) => { setDescription(e.target.value); setProsePreview(null); setProseErrors([]) }}
-            className="mt-1 w-full rounded border border-slate-800 bg-slate-950 p-2 text-sm text-slate-100" />
-          <button type="button" onClick={() => {
-            const result = parseRouteProse(description)
-            setProseErrors(result.errors)
-            setProsePreview(result.errors.length ? null : result.segments)
-          }} className="mt-2 rounded border border-slate-700 px-3 py-1.5 text-xs">Preview segments</button>
-          {proseErrors.length > 0 && <ul role="alert" className="mt-2 text-xs text-red-300">
-            {proseErrors.map((message) => <li key={message}>{message}</li>)}
-          </ul>}
-          {prosePreview && <div className="mt-3 text-xs text-slate-300">
-            <p>Review these segments before replacing the current list:</p>
-            <ol className="mt-2 list-inside list-decimal space-y-1">{prosePreview.map((s) =>
-              <li key={s.id}>{s.label} — {TERRAIN_LABEL[s.terrain]}, {s.phase}, {' '}
-                {isDistance(s.terrain) ? `${s.km} km / ${s.vertM} m` : `${s.count} ${s.terrain}${s.grade ? ` at ${s.grade}` : ''}`}
-                {s.exposed ? ', exposed' : ''}
-              </li>)}
-            </ol>
-            <button type="button" onClick={() => { setSegments(prosePreview); setProsePreview(null) }}
-              className="mt-3 rounded bg-amber-500 px-3 py-1.5 font-semibold text-slate-950">Use these segments</button>
-          </div>}
-        </details>
+        {restored && dirty && <p role="status" className="mt-3 text-sm text-amber-300">Recovered unsaved edits from this tab. Save to keep them on your account.</p>}
+        <a href="#route-plan" className="mt-4 inline-block rounded border border-slate-700 px-3 py-2 text-sm text-amber-300 lg:hidden">Jump to plan ↓</a>
+        <ProseInput description={description} onDescription={setDescription} onApply={setSegments} />
 
         {segments.length === 0 ? (
-          <p className="mt-8 rounded-xl border border-dashed border-slate-800 px-6 py-10 text-center text-sm text-slate-500">
+          <p className="mt-8 rounded-xl border border-dashed border-slate-800 px-6 py-10 text-center text-sm text-slate-400">
             No segments yet. Add the first one below and the plan appears immediately.
           </p>
         ) : (
@@ -178,12 +194,12 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
                   key={segment.id}
                   className="rounded-lg border border-slate-800 bg-slate-900/40 p-3"
                 >
-                  <div className="flex items-start gap-2">
-                    <span className="tabular mt-1.5 w-5 shrink-0 text-right text-xs text-slate-600">
+                  <div className="flex flex-wrap items-start gap-2">
+                    <span className="tabular mt-1.5 w-5 shrink-0 text-right text-xs text-slate-400">
                       {index + 1}
                     </span>
 
-                    <div className="min-w-0 flex-1 space-y-2">
+                    <div className="min-w-0 flex-1 basis-48 space-y-2">
                       <input
                         value={segment.label}
                         onChange={(e) => patch(index, { label: e.target.value })}
@@ -219,7 +235,7 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
 
                         {isDistance(segment.terrain) ? (
                           <>
-                            <label className="flex items-center gap-1 text-xs text-slate-500">
+                            <label className="flex items-center gap-1 text-xs text-slate-400">
                               km
                               <input
                                 type="number"
@@ -232,7 +248,7 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
                                 className={`${fieldClass} w-16`}
                               />
                             </label>
-                            <label className="flex items-center gap-1 text-xs text-slate-500">
+                            <label className="flex items-center gap-1 text-xs text-slate-400">
                               vert m
                               <input
                                 type="number"
@@ -248,7 +264,7 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
                           </>
                         ) : (
                           <>
-                            <label className="flex items-center gap-1 text-xs text-slate-500">
+                            <label className="flex items-center gap-1 text-xs text-slate-400">
                               {segment.terrain === 'pitches' ? 'pitches' : 'rappels'}
                               <input
                                 type="number"
@@ -262,7 +278,7 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
                               />
                             </label>
                             {segment.terrain === 'pitches' && (
-                              <label className="flex items-center gap-1 text-xs text-slate-500">
+                              <label className="flex items-center gap-1 text-xs text-slate-400">
                                 grade
                                 <input
                                   value={segment.grade ?? ''}
@@ -276,7 +292,7 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
                         )}
 
                         <label
-                          className="flex items-center gap-1.5 text-xs text-slate-500"
+                          className="flex items-center gap-1.5 text-xs text-slate-400"
                           title="The storm deadline applies through this segment"
                         >
                           <input
@@ -291,7 +307,7 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
                     </div>
 
                     <div className="flex shrink-0 flex-col items-end gap-1">
-                      {timed && (
+                      {timed && planReady && (
                         <span
                           className={`tabular text-xs ${
                             segment.id === plan.anchorSegmentId
@@ -307,13 +323,13 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
                           {formatClock(timed.startMin)}–{formatClock(timed.endMin)}
                         </span>
                       )}
-                      <div className="flex items-center gap-0.5 text-slate-600">
+                      <div className="flex items-center gap-0.5 text-slate-400">
                         <button
                           type="button"
                           onClick={() => move(index, -1)}
                           disabled={index === 0}
                           aria-label="Move up"
-                          className="px-1 transition hover:text-slate-300 disabled:opacity-25"
+                          className="min-h-9 min-w-9 px-2 transition hover:text-slate-300 disabled:opacity-25"
                         >
                           ↑
                         </button>
@@ -322,7 +338,7 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
                           onClick={() => move(index, 1)}
                           disabled={index === segments.length - 1}
                           aria-label="Move down"
-                          className="px-1 transition hover:text-slate-300 disabled:opacity-25"
+                          className="min-h-9 min-w-9 px-2 transition hover:text-slate-300 disabled:opacity-25"
                         >
                           ↓
                         </button>
@@ -330,13 +346,14 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
                           type="button"
                           onClick={() => remove(index)}
                           aria-label="Delete segment"
-                          className="px-1 transition hover:text-red-400"
+                          className="min-h-9 min-w-9 px-2 transition hover:text-red-400"
                         >
                           ✕
                         </button>
                       </div>
                     </div>
                   </div>
+                  {segmentProblems(segment).map(message => <p key={message} className="mt-2 text-xs text-amber-300">{message}</p>)}
                 </li>
               )
             })}
@@ -354,6 +371,7 @@ export function RouteEditor({ route, defaultDate }: { route: RouteRow; defaultDa
 
       <PlanPanel
         plan={plan}
+        ready={planReady}
         date={date}
         onDate={setDate}
         partySize={partySize}

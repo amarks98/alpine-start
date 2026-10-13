@@ -9,7 +9,7 @@ export function NewRouteForm() {
   return (
     <section className="mt-10 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
       <h2 className="text-sm font-semibold text-slate-200">New route</h2>
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-1 text-xs text-slate-400">
         The timezone is derived from the coordinates, so there is nothing to pick.
       </p>
 
@@ -24,7 +24,7 @@ export function NewRouteForm() {
             required
             maxLength={120}
             placeholder="North Ridge of Lone Pine Peak"
-            className="mt-1 w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-600 focus:border-amber-500"
+            className="mt-1 w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-400 focus:border-amber-500"
           />
         </div>
 
@@ -38,7 +38,7 @@ export function NewRouteForm() {
               name="coordinates"
               required
               placeholder="37.0947, -118.5100"
-              className="tabular mt-1 w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-600 focus:border-amber-500"
+              className="tabular mt-1 w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-400 focus:border-amber-500"
             />
           </div>
           <div>

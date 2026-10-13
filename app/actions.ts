@@ -17,7 +17,7 @@ export type ActionState = { error?: string; message?: string } | null
 
 const field = (data: FormData, name: string): string => String(data.get(name) ?? '').trim()
 
-// ------------------------------------------------------------------- auth
+// Auth
 
 export async function signIn(_prev: ActionState, data: FormData): Promise<ActionState> {
   const supabase = await createClient()
@@ -45,11 +45,7 @@ export async function signUp(_prev: ActionState, data: FormData): Promise<Action
   redirect('/routes')
 }
 
-/**
- * One shared demo account. DEMO_* are server-only and never reach the client
- * bundle. Every demo visitor shares this account's routes — accepted, and
- * documented in the architecture doc's caveats.
- */
+/** Shared demo credentials stay server-only; all demo visitors share routes. */
 export async function signInDemo(_prev: ActionState): Promise<ActionState> {
   const email = process.env.DEMO_EMAIL
   const password = process.env.DEMO_PASSWORD
@@ -72,7 +68,7 @@ export async function signOut(): Promise<void> {
   redirect('/login')
 }
 
-// ----------------------------------------------------------------- routes
+// Routes
 
 export async function createRoute(_prev: ActionState, data: FormData): Promise<ActionState> {
   const coords = parseCoordinates(field(data, 'coordinates'))
@@ -92,8 +88,7 @@ export async function createRoute(_prev: ActionState, data: FormData): Promise<A
 
   const { name, lat, lng, elevM } = parsed.data
 
-  // Safe now: the schema has already bounded lat/lng, which is the only input
-  // that can make tzlookup throw.
+  // Coordinates are validated before timezone lookup.
   const timezone = tzlookup(lat, lng)
 
   const supabase = await createClient()
@@ -144,11 +139,7 @@ export async function deleteRoute(data: FormData): Promise<void> {
   revalidatePath('/routes')
 }
 
-/**
- * One save for the whole editor: segments plus the three plan controls. The
- * controls are persisted because the demo changes them and they must survive a
- * reload, including the selected plan date and original prose description.
- */
+/** Persist the full editor state in one update. */
 export async function saveRoute(
   id: string,
   payload: SavePayload,

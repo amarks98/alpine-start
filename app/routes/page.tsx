@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { addSampleRoute, deleteRoute, signOut } from '@/app/actions'
 import { createClient } from '@/lib/supabase/server'
 import { ROUTE_COLUMNS, type RouteRow } from '@/lib/validation'
+import { DeleteRouteButton } from './DeleteRouteButton'
 import { NewRouteForm } from './NewRouteForm'
 
 export default async function RoutesPage() {
@@ -18,12 +19,12 @@ export default async function RoutesPage() {
       <header className="flex items-baseline justify-between gap-4 border-b border-slate-800 pb-5">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-white">Your routes</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-400">
             Build a route from segments, and the plan tells you when to leave.
           </p>
         </div>
         <form action={signOut}>
-          <button type="submit" className="text-sm text-slate-500 hover:text-slate-300">
+          <button type="submit" className="text-sm text-slate-400 hover:text-slate-300">
             Sign out
           </button>
         </form>
@@ -38,7 +39,7 @@ export default async function RoutesPage() {
       {routes.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-slate-800 px-6 py-10 text-center">
           <p className="text-sm text-slate-400">No routes yet.</p>
-          <p className="mx-auto mt-1 max-w-sm text-sm text-slate-600">
+          <p className="mx-auto mt-1 max-w-sm text-sm text-slate-400">
             Start with the pre-segmented Palisades Traverse, or add your own below.
           </p>
           <form action={addSampleRoute} className="mt-5">
@@ -62,7 +63,7 @@ export default async function RoutesPage() {
                   >
                     {route.name}
                   </Link>
-                  <p className="tabular mt-0.5 text-xs text-slate-500">
+                  <p className="tabular mt-0.5 text-xs text-slate-400">
                     {route.segments?.length ?? 0} segment
                     {(route.segments?.length ?? 0) === 1 ? '' : 's'} · {route.lat.toFixed(4)},{' '}
                     {route.lng.toFixed(4)} · {route.elev_m} m · {route.timezone}
@@ -70,12 +71,7 @@ export default async function RoutesPage() {
                 </div>
                 <form action={deleteRoute}>
                   <input type="hidden" name="id" value={route.id} />
-                  <button
-                    type="submit"
-                    className="shrink-0 text-xs text-slate-600 transition hover:text-red-400"
-                  >
-                    Delete
-                  </button>
+                  <DeleteRouteButton name={route.name} />
                 </form>
               </li>
             ))}

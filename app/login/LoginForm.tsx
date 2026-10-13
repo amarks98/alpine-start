@@ -37,7 +37,7 @@ export function LoginForm({ demoConfigured }: { demoConfigured: boolean }) {
             </button>
           </form>
 
-          <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-wider text-slate-600">
+          <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-wider text-slate-400">
             <span className="h-px flex-1 bg-slate-800" />
             or
             <span className="h-px flex-1 bg-slate-800" />
@@ -56,7 +56,7 @@ export function LoginForm({ demoConfigured }: { demoConfigured: boolean }) {
             type="email"
             required
             autoComplete="email"
-            className="mt-1.5 w-full rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-600 focus:border-amber-500"
+            className="mt-1.5 w-full rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-400 focus:border-amber-500"
             placeholder="you@example.com"
           />
         </div>
@@ -97,7 +97,7 @@ export function LoginForm({ demoConfigured }: { demoConfigured: boolean }) {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-slate-400">
         {mode === 'signin' ? 'No account yet?' : 'Already have an account?'}{' '}
         <button
           type="button"
