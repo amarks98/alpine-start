@@ -1,54 +1,36 @@
-# Deployment and acceptance checks
+# Deployment
 
-## Current state
+Production: https://alpine-start.vercel.app
+Supabase: **amarks98's Casper Project** (`nobqwmdimnsiodzrrgcl`)
 
-The chosen hosted project is **amarks98's Casper Project**, ref `nobqwmdimnsiodzrrgcl`. Its original Alpine Start routes schema was already present. The additive date/description upgrade has been applied through the SQL editor, and RLS plus all four owner-only policies were verified there.
+Production demo login and route viewing are verified. Local UX polish and parser changes still require deployment and hosted acceptance. AI remains disabled; no AI key is required.
 
-Production is deployed at https://alpine-start.vercel.app. Source is in the private repository https://github.com/amarks98/alpine-start. The production login page is verified. Demo credentials were supplied through the ignored environment file and deployed; Supabase currently returns `Email not confirmed` for that account. Its email confirmation is pending. Vercel GitHub App access is also pending, so the initial deployment used the CLI.
-
-Production values are prepared in `.env.production.local`, which is ignored by Git and readable only by the file owner. Do not commit it, `.env.local`, or `.vercel/`.
-
-## Database migrations
-
-The source of truth is the ordered migration chain:
-
-1. `20261012000100_initial_routes.sql`: original table, index, constraints and four owner policies.
-2. `20261012000200_plan_date_and_description.sql`: additive saved-date and prose columns.
-
-The nonexistent seed-file reference has been removed from `supabase/config.toml`. Fresh local starts/reset use the migrations, not the standalone `schema.sql` file.
-
-```bash
-npx supabase start
-```
-
-Only for a disposable local database:
-
-```bash
-npx supabase db reset --local
-```
-
-A reset removes local users and data. The current local stack was upgraded additively; reset verification has not been performed because permission for that verification command was declined.
-
-For a new hosted project, use the [Supabase migration workflow](https://supabase.com/docs/guides/local-development/database-migrations). For an existing project, inspect migration history and capture any remote-only schema before pushing. The selected project's schema was installed through the dashboard, so its migration history still needs baselining before future automated `db push` use. Do not blindly mark unrelated migrations as applied.
-
-`supabase/schema.sql` provides equivalent idempotent SQL-editor setup. On an existing Alpine Start schema, the second migration alone adds the new columns without changing route data or policies.
-
-## Production environment
+## Environment
 
 | Variable | Value |
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://nobqwmdimnsiodzrrgcl.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Project public anon/publishable key |
-| `DEMO_EMAIL` | Confirmed demo account supplied by the owner |
-| `DEMO_PASSWORD` | Demo user's password; server-only |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anon/publishable key |
+| `DEMO_EMAIL` | Confirmed demo user's email |
+| `DEMO_PASSWORD` | Demo password; server-only |
 
-The service-role key is not required by the application and must not be deployed.
+Keep `.env.local`, `.env.production.local`, and `.vercel/` out of Git. Do not deploy a service-role key. Set Supabase's Site URL to the production URL and configure redirect URLs for enabled auth flows. Sign-up requests email confirmation when required by the project's auth policy.
 
-Email/password sign-up displays confirmation instructions when Supabase does not issue a session. On a shared project, preserve its existing auth policy unless the owner authorizes changing it; confirmed accounts can still sign in. Confirm the demo user individually rather than weakening the whole project's settings just for the demo.
+## Database
 
-## Vercel
+`supabase/migrations/` is the source of truth:
 
-Deploy from the private GitHub repository once pushed. Use Next.js framework detection, the repository root, and the four production variables above. A CLI deploy is also supported:
+1. Initial routes table, constraints, and four owner-only RLS policies.
+2. Saved date and description.
+3. Inactive AI quota prototype: 20/account and 100/global attempts per UTC day.
+
+Fresh local stacks apply migrations through `npx supabase start`. `supabase/schema.sql` is the SQL-editor alternative. To recreate a **disposable** local database, use `npx supabase db reset --local`; this deletes local users and data. Fresh-reset verification remains outstanding.
+
+Hosted schema changes were applied through the dashboard. Baseline migration history and preserve remote-only changes before using automated `db push`. Existing quota tables can remain while AI is deferred.
+
+## Deploy
+
+Use the repository root, Next.js framework detection, and the environment above in Vercel. The GitHub connection is configured. CLI alternative:
 
 ```bash
 npx vercel login
@@ -56,28 +38,16 @@ npx vercel link
 npx vercel --prod
 ```
 
-See [Vercel deploy documentation](https://vercel.com/docs/cli/deploy). A successful build is not sufficient: verify the running app against hosted Supabase.
+## Acceptance
 
-Set Supabase's Site URL to the chosen production URL and configure permitted redirect URLs when using confirmation, password recovery or OAuth flows. These settings control authentication redirect destinations; they do not determine the origin of the application's SSR session cookie. See [Supabase redirect documentation](https://supabase.com/docs/guides/auth/redirect-urls).
+Local checks have covered demo login, creation, sample calculations, parsing, reordering, persistence, protected routes, and owner isolation. The polished editor was checked at 390px without horizontal overflow; missing distance hides the plan and segment clocks. TypeScript and a Webpack production build passed.
 
-## Acceptance checks
+Repeat on the deployed revision in a fresh browser session:
 
-Use a fresh browser session for the deployment checks. Local results so far:
-
-- [x] Demo password login reaches the routes list.
-- [x] Route creation derives `America/Los_Angeles` from Sierra coordinates.
-- [x] July sample departure: party 2 / cutoff 14:00 / margin 60 → 02:48, storm-bound.
-- [x] Party 3 → 00:56.
-- [x] Restore party 2 / cutoff 17:00 → 04:29, dark-bound; checkpoint 15:41.
-- [x] Save and reload retain the selected date and cutoff.
-- [x] Prose preview parses four segments; application, reordering and save/reload work.
-- [ ] Mobile layout check at 390px (browser override retained a 662px viewport; narrower width remains unverified).
-- [x] Sign out; protected routes lead to login.
-- [x] Another user's route returns 404 in the browser (database isolation tests pass).
-- [ ] Hosted deployment: repeat all applicable checks with production credentials.
-
-For the exact figures above, explicitly select **July 15, 2026**, margin **60**, and reset party size to **2** before the 17:00-cutoff case. The editor otherwise defaults to a saved date or tomorrow, so its daylight figures will differ.
-
-## Remaining operational work
-
-Finish hosted demo acceptance after email confirmation, connect Vercel GitHub App access for automatic deploys, and baseline remote migration history before automated database pushes. Keep future database changes in migrations. Trip logging, calibrated rates and offline use remain separate follow-up features.
+- [ ] Demo login, route creation, and sample values from [README](README.md#try-the-sample).
+- [ ] Prose preview/application, reorder, save, and reload.
+- [ ] Empty/incomplete routes hide recommendations.
+- [ ] Unsaved-edit warning, same-tab recovery, and deletion cancellation.
+- [ ] Phone layout at 390px and keyboard navigation.
+- [ ] Sign-out protects routes; another user's route returns 404.
+- [ ] AI endpoint returns 501; the local parser still works.

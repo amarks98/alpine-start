@@ -1,8 +1,4 @@
-/**
- * Next 16 renamed middleware.ts to proxy.ts, and the loader reads an export
- * named `proxy` (or a default). This refreshes the Supabase session cookie and
- * bounces unauthenticated visitors to /login.
- */
+/** Refresh the Supabase session and redirect unauthenticated route requests to login. */
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from '@/lib/env'

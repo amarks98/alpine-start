@@ -18,3 +18,7 @@ supabase/snippets
 .env
 .env.*
 !.env.example
+
+graphify-out/*/
+graphify-out/.graphify_labels.json.sig
+graphify-out/.graphify_root
