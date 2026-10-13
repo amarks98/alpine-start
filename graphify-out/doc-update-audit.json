@@ -1,0 +1,9 @@
+{
+  "sources": [
+    "/home/alex-marks/Desktop/SWE_Projects/alpine_start/README.md",
+    "/home/alex-marks/Desktop/SWE_Projects/alpine_start/alpine-start-architecture.md"
+  ],
+  "semantic_extractor": "Codex subagent",
+  "token_usage": null,
+  "note": "Subagent API does not expose usage counts; zero placeholders in extraction are not measured usage."
+}

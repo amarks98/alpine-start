@@ -1,0 +1,484 @@
+{
+  "communities": {
+    "0": [
+      "app_routes_id_planpanel",
+      "app_routes_id_planpanel_clampmargin",
+      "app_routes_id_planpanel_daynote",
+      "app_routes_id_planpanel_minutesfromtime",
+      "app_routes_id_planpanel_planpanel",
+      "app_routes_id_planpanel_row",
+      "app_routes_id_planpanel_warning_text",
+      "lib_dates",
+      "lib_dates_isplandate",
+      "lib_dates_test",
+      "lib_engine",
+      "lib_engine_buildplan",
+      "lib_engine_daylight",
+      "lib_engine_dayoffset",
+      "lib_engine_formatclock",
+      "lib_engine_formatduration",
+      "lib_engine_gradevalue",
+      "lib_engine_letter",
+      "lib_engine_munter",
+      "lib_engine_num",
+      "lib_engine_partyfactor",
+      "lib_engine_phase",
+      "lib_engine_pitch_min",
+      "lib_engine_pitchminutes",
+      "lib_engine_plan",
+      "lib_engine_planinput",
+      "lib_engine_segmentminutes",
+      "lib_engine_segmentplan",
+      "lib_engine_sum",
+      "lib_engine_terrainfactors",
+      "lib_engine_test",
+      "lib_engine_test_base",
+      "lib_engine_test_palisades",
+      "lib_engine_test_seg",
+      "lib_engine_tolocalminutes",
+      "lib_engine_utcoffsetminutes",
+      "lib_engine_warning",
+      "lib_integration_test",
+      "lib_plan_panel_test",
+      "lib_plan_panel_test_input",
+      "lib_plan_panel_test_noop",
+      "lib_plan_panel_test_render",
+      "lib_sample_route",
+      "lib_sample_route_sample_route",
+      "lib_validation_route_columns",
+      "ref_react_dom",
+      "ref_supabase_supabase_js"
+    ],
+    "1": [
+      "alpine_start_architecture",
+      "alpine_start_architecture_ai_integration_deferred",
+      "alpine_start_architecture_architecture",
+      "alpine_start_architecture_boundaries",
+      "alpine_start_architecture_browser_planning",
+      "alpine_start_architecture_checkpoint_deadline",
+      "alpine_start_architecture_data_and_editing",
+      "alpine_start_architecture_daylight_timezone",
+      "alpine_start_architecture_draft_recovery",
+      "alpine_start_architecture_extensions",
+      "alpine_start_architecture_ordered_segments",
+      "alpine_start_architecture_pace_calibration",
+      "alpine_start_architecture_route_editor",
+      "alpine_start_architecture_scope_decisions",
+      "alpine_start_architecture_server_actions",
+      "alpine_start_architecture_supabase_rls",
+      "alpine_start_architecture_timing_model",
+      "deploy",
+      "deploy_acceptance",
+      "deploy_database",
+      "deploy_deploy",
+      "deploy_deployment",
+      "deploy_environment",
+      "readme",
+      "readme_ai_review_controls",
+      "readme_alpine_start",
+      "readme_demo_access",
+      "readme_enter_a_route",
+      "readme_incomplete_route_suppression",
+      "readme_local_prose_parser",
+      "readme_local_setup",
+      "readme_next_ai_assisted_route_intake",
+      "readme_planning_assumptions",
+      "readme_run_locally",
+      "readme_sample_acceptance",
+      "readme_submission_status",
+      "readme_try_the_sample",
+      "readme_verification",
+      "readme_verify",
+      "readme_what_works"
+    ],
+    "2": [
+      "lib_agentcore",
+      "lib_agentcore_test",
+      "lib_agentcore_test_mocks",
+      "lib_agentcore_withagentcoretools",
+      "package",
+      "package_devdependencies",
+      "package_devdependencies_tailwindcss",
+      "package_devdependencies_tailwindcss_postcss",
+      "package_devdependencies_types_node",
+      "package_devdependencies_types_react",
+      "package_devdependencies_types_react_dom",
+      "package_devdependencies_typescript",
+      "package_devdependencies_vitest",
+      "package_name",
+      "package_private",
+      "package_scripts",
+      "package_scripts_build",
+      "package_scripts_dev",
+      "package_scripts_start",
+      "package_scripts_test",
+      "package_scripts_test_watch",
+      "package_scripts_typecheck",
+      "package_version",
+      "ref_ai",
+      "ref_ai_sdk_mcp",
+      "ref_server_only",
+      "ref_suncalc",
+      "ref_tailwindcss",
+      "ref_tailwindcss_postcss",
+      "ref_types_node",
+      "ref_types_react",
+      "ref_types_react_dom",
+      "ref_typescript",
+      "ref_tz_lookup"
+    ],
+    "3": [
+      "lib_bedrock",
+      "lib_bedrock_test",
+      "lib_bedrock_test_mocks",
+      "lib_bedrock_test_output",
+      "lib_bedrock_translatewithbedrock",
+      "lib_engine_segment",
+      "lib_translation",
+      "lib_translation_applydrafts",
+      "lib_translation_draftproblems",
+      "lib_translation_draftschema",
+      "lib_translation_draftsschema",
+      "lib_translation_extractdrafts",
+      "lib_translation_extractionschema",
+      "lib_translation_localdrafts",
+      "lib_translation_max_description",
+      "lib_translation_max_drafts",
+      "lib_translation_normalized",
+      "lib_translation_segmentdraft",
+      "lib_translation_test",
+      "lib_translation_test_draft",
+      "lib_translation_test_extracted",
+      "lib_validation",
+      "lib_validation_createrouteschema",
+      "lib_validation_phaseschema",
+      "lib_validation_savepayload",
+      "lib_validation_segmentschema",
+      "lib_validation_segmentsschema",
+      "lib_validation_terrainschema",
+      "lib_validation_test",
+      "lib_validation_test_trail",
+      "ref_ai_sdk_amazon_bedrock",
+      "ref_aws_sdk_credential_providers",
+      "ref_zod"
+    ],
+    "4": [
+      "app_actions",
+      "app_actions_actionstate",
+      "app_actions_addsampleroute",
+      "app_actions_createroute",
+      "app_actions_deleteroute",
+      "app_actions_field",
+      "app_actions_signin",
+      "app_actions_signindemo",
+      "app_actions_signout",
+      "app_actions_signup",
+      "app_login_loginform",
+      "app_login_loginform_loginform",
+      "app_login_page",
+      "app_login_page_loginpage",
+      "app_routes_deleteroutebutton",
+      "app_routes_deleteroutebutton_deleteroutebutton",
+      "app_routes_newrouteform",
+      "app_routes_newrouteform_newrouteform",
+      "app_routes_page",
+      "app_routes_page_routespage",
+      "lib_save_action_test",
+      "lib_save_action_test_mocks",
+      "lib_save_action_test_payload",
+      "lib_supabase_server_createclient",
+      "lib_validation_parsecoordinates"
+    ],
+    "5": [
+      "app_actions_saveroute",
+      "app_routes_id_page",
+      "app_routes_id_page_routepage",
+      "app_routes_id_proseinput",
+      "app_routes_id_proseinput_proseinput",
+      "app_routes_id_proseinput_proseinput_parse",
+      "app_routes_id_routeeditor",
+      "app_routes_id_routeeditor_isdistance",
+      "app_routes_id_routeeditor_numorundefined",
+      "app_routes_id_routeeditor_routeeditor",
+      "app_routes_id_routeeditor_terrain_label",
+      "lib_engine_dateinzone",
+      "lib_engine_terrain",
+      "lib_prose",
+      "lib_prose_isconstrainedprose",
+      "lib_prose_parsedroute",
+      "lib_prose_parserouteprose",
+      "lib_prose_prose_example",
+      "lib_prose_test",
+      "lib_validation_routerow",
+      "lib_validation_savepayloadschema",
+      "lib_validation_segmentproblems",
+      "ref_react"
+    ],
+    "6": [
+      "tsconfig",
+      "tsconfig_compileroptions",
+      "tsconfig_compileroptions_allowjs",
+      "tsconfig_compileroptions_esmoduleinterop",
+      "tsconfig_compileroptions_incremental",
+      "tsconfig_compileroptions_isolatedmodules",
+      "tsconfig_compileroptions_jsx",
+      "tsconfig_compileroptions_lib",
+      "tsconfig_compileroptions_module",
+      "tsconfig_compileroptions_moduleresolution",
+      "tsconfig_compileroptions_noemit",
+      "tsconfig_compileroptions_nouncheckedindexedaccess",
+      "tsconfig_compileroptions_paths",
+      "tsconfig_compileroptions_plugins",
+      "tsconfig_compileroptions_resolvejsonmodule",
+      "tsconfig_compileroptions_skiplibcheck",
+      "tsconfig_compileroptions_strict",
+      "tsconfig_compileroptions_target",
+      "tsconfig_exclude",
+      "tsconfig_include"
+    ],
+    "7": [
+      "app_globals",
+      "app_layout",
+      "app_layout_metadata",
+      "app_layout_rootlayout",
+      "app_page",
+      "app_page_home",
+      "lib_env",
+      "lib_env_requiredenv",
+      "lib_env_supabase_anon_key",
+      "lib_env_supabase_url",
+      "lib_supabase_server",
+      "next_config",
+      "next_config_nextconfig",
+      "proxy",
+      "proxy_config",
+      "proxy_proxy",
+      "ref_next",
+      "ref_supabase_ssr"
+    ],
+    "8": [
+      "package_dependencies",
+      "package_dependencies_ai",
+      "package_dependencies_ai_sdk_amazon_bedrock",
+      "package_dependencies_ai_sdk_mcp",
+      "package_dependencies_aws_sdk_credential_providers",
+      "package_dependencies_next",
+      "package_dependencies_react",
+      "package_dependencies_react_dom",
+      "package_dependencies_server_only",
+      "package_dependencies_suncalc",
+      "package_dependencies_supabase_ssr",
+      "package_dependencies_supabase_supabase_js",
+      "package_dependencies_tz_lookup",
+      "package_dependencies_zod"
+    ],
+    "9": [
+      "readme_casper_orig",
+      "readme_casper_orig_ai_tools",
+      "readme_casper_orig_casper_engineering_take_home",
+      "readme_casper_orig_constraints",
+      "readme_casper_orig_deployment",
+      "readme_casper_orig_everything_else_is_up_to_you",
+      "readme_casper_orig_language",
+      "readme_casper_orig_objective",
+      "readme_casper_orig_submission",
+      "readme_casper_orig_time",
+      "readme_casper_orig_what_we_expect_to_see"
+    ],
+    "10": [
+      "app_api_translate_route",
+      "app_api_translate_route_post",
+      "lib_translate_api_test",
+      "lib_translation_quota_test",
+      "ref_node_child_process",
+      "ref_node_url",
+      "ref_vitest",
+      "vitest_config"
+    ],
+    "11": [
+      "alpine_start_architecture_agentcore_connector",
+      "alpine_start_architecture_ai_enablement",
+      "alpine_start_architecture_bedrock_adapter",
+      "alpine_start_architecture_import_provenance",
+      "alpine_start_architecture_vercel_ai_sdk",
+      "readme_ai_route_intake",
+      "readme_route_link_imports"
+    ],
+    "12": [
+      "agents",
+      "agents_graphify",
+      "agents_this_is_not_the_next_js_you_know"
+    ],
+    "13": [
+      "postcss_config",
+      "postcss_config_config"
+    ],
+    "14": [
+      "types_tz_lookup_d",
+      "types_tz_lookup_d_tz_lookup"
+    ]
+  },
+  "cohesion": {
+    "0": 0.08603145235892692,
+    "1": 0.05384615384615385,
+    "2": 0.06417112299465241,
+    "3": 0.09659090909090909,
+    "4": 0.19666666666666666,
+    "5": 0.16996047430830039,
+    "6": 0.1,
+    "7": 0.17647058823529413,
+    "8": 0.14285714285714285,
+    "9": 0.18181818181818182,
+    "10": 0.2857142857142857,
+    "11": 0.38095238095238093,
+    "12": 0.6666666666666666,
+    "13": 1.0,
+    "14": 1.0
+  },
+  "gods": [
+    {
+      "id": "lib_supabase_server_createclient",
+      "label": "createClient()",
+      "degree": 18
+    },
+    {
+      "id": "tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 17
+    },
+    {
+      "id": "ref_vitest",
+      "label": "vitest",
+      "degree": 14
+    },
+    {
+      "id": "app_routes_id_planpanel_planpanel",
+      "label": "PlanPanel()",
+      "degree": 12
+    },
+    {
+      "id": "readme_alpine_start",
+      "label": "Alpine Start",
+      "degree": 12
+    },
+    {
+      "id": "app_routes_id_routeeditor_routeeditor",
+      "label": "RouteEditor()",
+      "degree": 11
+    },
+    {
+      "id": "ref_next",
+      "label": "next",
+      "degree": 10
+    },
+    {
+      "id": "lib_engine_segment",
+      "label": "Segment",
+      "degree": 9
+    },
+    {
+      "id": "lib_engine_buildplan",
+      "label": "buildPlan()",
+      "degree": 9
+    },
+    {
+      "id": "readme_casper_orig_casper_engineering_take_home",
+      "label": "Casper Engineering Take-Home",
+      "degree": 8
+    }
+  ],
+  "surprises": [
+    {
+      "source": "render()",
+      "target": "PlanPanel()",
+      "source_files": [
+        "lib/plan-panel.test.ts",
+        "app/routes/[id]/PlanPanel.tsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "indirect_call",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "RouteEditor()",
+      "target": "buildPlan()",
+      "source_files": [
+        "app/routes/[id]/RouteEditor.tsx",
+        "lib/engine.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "RouteEditor()",
+      "target": "formatClock()",
+      "source_files": [
+        "app/routes/[id]/RouteEditor.tsx",
+        "lib/engine.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "addSampleRoute()",
+      "target": "dateInZone()",
+      "source_files": [
+        "app/actions.ts",
+        "lib/engine.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "createRoute()",
+      "target": "dateInZone()",
+      "source_files": [
+        "app/actions.ts",
+        "lib/engine.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `vitest` connect `vitest` to `engine.ts`, `package.json`, `validation.ts`, `actions.ts`, `RouteEditor.tsx`?",
+      "why": "High betweenness centrality (0.100) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `tailwindcss`, `@tailwindcss/postcss`, `@types/node` to the rest of the system?",
+      "why": "13 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `engine.ts` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.08603145235892692 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `next` connect `server.ts` to `package.json`, `actions.ts`, `RouteEditor.tsx`?",
+      "why": "High betweenness centrality (0.066) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Alpine Start` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.05384615384615385 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `dependencies` connect `dependencies` to `package.json`?",
+      "why": "High betweenness centrality (0.062) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `package.json` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06417112299465241 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

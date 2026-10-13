@@ -247,9 +247,9 @@
   },
   "README.md": {
     "mtime": 1791906034.696215,
-    "seen": 1791906037.3823652,
+    "seen": 1791915990.3509789,
     "ast_hash": "65d217ab12523e9f09da12d4f28a592d",
-    "semantic_hash": ""
+    "semantic_hash": "65d217ab12523e9f09da12d4f28a592d"
   },
   "README_CASPER_ORIG.md": {
     "mtime": 1791878466.152304,
@@ -259,9 +259,9 @@
   },
   "alpine-start-architecture.md": {
     "mtime": 1791906034.696973,
-    "seen": 1791906037.3825395,
+    "seen": 1791915990.3509982,
     "ast_hash": "ad0368f01befc15653f2f25179896ace",
-    "semantic_hash": ""
+    "semantic_hash": "ad0368f01befc15653f2f25179896ace"
   },
   "lib/agentcore.test.ts": {
     "mtime": 1791905341.9572532,
